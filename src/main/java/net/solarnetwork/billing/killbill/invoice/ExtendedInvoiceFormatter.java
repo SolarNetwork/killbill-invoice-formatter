@@ -42,12 +42,46 @@ public interface ExtendedInvoiceFormatter extends InvoiceFormatter {
    */
   List<InvoiceItem> getTaxInvoiceItems();
 
+  /**
+   * Get the total amount of all tax invoice items.
+   * 
+   * @return the total tax amount
+   */
   BigDecimal getTaxAmount();
 
+  /**
+   * Get the total tax amount, formatted for the locale of the invoice.
+   * 
+   * @return the formatted total tax amount
+   */
   String getFormattedTaxAmount();
 
+  /**
+   * Get the total amount of all non-tax invoice items.
+   * 
+   * @return the total non-tax amount
+   */
   BigDecimal getNonTaxChargedAmount();
 
+  /**
+   * Get the total non-tax amount, formatted for the locale of the invoice.
+   * 
+   * @return the formatted total non-tax amount
+   */
   String getFormattedNonTaxChargedAmount();
+
+  /**
+   * Get the total paid amount, formatted for the locale of the invoice.
+   * 
+   * @return the formatted paid amount
+   */
+  String getBasicFormattedPaidAmount();
+
+  /**
+   * Get the invoice balance, formatted for the locale of the invoice.
+   * 
+   * @return the formatted balance amount
+   */
+  String getBasicFormattedBalance();
 
 }
