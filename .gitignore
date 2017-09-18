@@ -2,3 +2,4 @@
 /build/
 /bin/
 *.jpage
+/gradle-local.properties

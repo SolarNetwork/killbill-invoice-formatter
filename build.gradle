@@ -1,7 +1,10 @@
 plugins {
-    id "java"
-    id "checkstyle"
-    id "eclipse"
+    id 'java'
+    id 'checkstyle'
+    id 'eclipse'
+    id 'net.saliman.properties' version '1.4.6'
+    id 'net.researchgate.release' version '2.6.0'
+    id 'com.jfrog.bintray' version '1.7.3'
 }
 
 repositories {
@@ -33,8 +36,6 @@ dependencies {
     testRuntime "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
 }
 
-version = "0.1.0"
-
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -55,4 +56,30 @@ jar {
 
 wrapper {
 	gradleVersion = "4.1"
+}
+
+bintray {
+    user = bintray_user
+    key = bintray_key
+    configurations = ['archives']
+    pkg {
+        repo = 'SolarNetwork'
+        name = 'killbill-invoice-formatter'
+        userOrg = 'solarnetwork'
+        licenses = ['Apache-2.0']
+        websiteUrl = 'https://github.com/SolarNetwork/killbill-invoice-formatter'
+        issueTrackerUrl = 'https://github.com/SolarNetwork/killbill-invoice-formatter/issues'
+        vcsUrl = 'https://github.com/SolarNetwork/killbill-invoice-formatter.git'
+        version {
+            name = "${version}"
+            desc = "SolarNetwork Kill Bill Invoice Formatter ${version}"
+            released  = new Date()
+            vcsTag = "${version}"
+            attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin']
+            gpg {
+                sign = true
+                passphrase = bintray_gpg_passphrase
+            }
+        }
+    }
 }
