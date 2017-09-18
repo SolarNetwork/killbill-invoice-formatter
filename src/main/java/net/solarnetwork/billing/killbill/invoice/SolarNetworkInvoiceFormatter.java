@@ -161,6 +161,11 @@ public class SolarNetworkInvoiceFormatter extends DefaultInvoiceFormatter
     return items;
   }
 
+  @Override
+  public List<CustomField> getCustomFields() {
+    return customFields;
+  }
+
   /**
    * Format a currency amount using the default JDK formatting rules.
    * 
