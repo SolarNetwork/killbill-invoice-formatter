@@ -15,10 +15,13 @@
 
 package net.solarnetwork.billing.killbill.invoice;
 
+import static java.util.stream.Collectors.toList;
+
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -31,8 +34,13 @@ import org.killbill.billing.currency.api.CurrencyConversionApi;
 import org.killbill.billing.invoice.api.Invoice;
 import org.killbill.billing.invoice.api.InvoiceItem;
 import org.killbill.billing.invoice.api.InvoiceItemType;
+import org.killbill.billing.invoice.api.formatters.InvoiceItemFormatter;
 import org.killbill.billing.invoice.api.formatters.ResourceBundleFactory;
 import org.killbill.billing.invoice.template.formatters.DefaultInvoiceFormatter;
+import org.killbill.billing.util.customfield.CustomField;
+import org.killbill.billing.util.customfield.StringCustomField;
+import org.killbill.billing.util.customfield.dao.CustomFieldDao;
+import org.killbill.billing.util.customfield.dao.CustomFieldModelDao;
 import org.killbill.billing.util.template.translation.TranslatorConfig;
 
 /**
@@ -42,6 +50,11 @@ import org.killbill.billing.util.template.translation.TranslatorConfig;
  */
 public class SolarNetworkInvoiceFormatter extends DefaultInvoiceFormatter
     implements ExtendedInvoiceFormatter {
+
+  private final InternalTenantContext tenantContext;
+
+  private List<CustomField> customFields;
+  private List<InvoiceItem> invoiceItems;
 
   /**
    * Constructor.
@@ -58,11 +71,21 @@ public class SolarNetworkInvoiceFormatter extends DefaultInvoiceFormatter
    *          the bundle factory
    * @param context
    *          the context
+   * @param customFieldDao
+   *          DAO to lookup custom fields related to the invoice
    */
   public SolarNetworkInvoiceFormatter(TranslatorConfig config, Invoice invoice, Locale locale,
       CurrencyConversionApi currencyConversionApi, ResourceBundleFactory bundleFactory,
-      InternalTenantContext context) {
+      InternalTenantContext context, CustomFieldDao customFieldDao) {
     super(config, invoice, locale, currencyConversionApi, bundleFactory, context);
+    this.tenantContext = context;
+
+    List<CustomFieldModelDao> daoCustomFields = Collections.emptyList();
+    if (customFieldDao != null) {
+      daoCustomFields = customFieldDao.getCustomFieldsForAccount(tenantContext);
+    }
+    this.customFields = daoCustomFields.stream().map(f -> new StringCustomField(f))
+        .collect(toList());
   }
 
   private Stream<InvoiceItem> getNonTaxInvoiceItemStream() {
@@ -123,6 +146,21 @@ public class SolarNetworkInvoiceFormatter extends DefaultInvoiceFormatter
     return number.format(amount.doubleValue());
   }
 
+  @Override
+  public List<InvoiceItem> getInvoiceItems() {
+    List<InvoiceItem> items = invoiceItems;
+    if (items == null) {
+      items = super.getInvoiceItems();
+      if (items != null && !items.isEmpty()) {
+        items = items.stream().map(item -> {
+          return new SolarNetworkInvoiceItemFormatter((InvoiceItemFormatter) item, customFields);
+        }).collect(toList());
+        invoiceItems = items; // cache for subsequent calls
+      }
+    }
+    return items;
+  }
+
   /**
    * Format a currency amount using the default JDK formatting rules.
    * 
@@ -134,8 +172,8 @@ public class SolarNetworkInvoiceFormatter extends DefaultInvoiceFormatter
    *          the desired locale
    * @return the formatted amount
    */
-  public static String formattedCurrencyAmount(BigDecimal amount, String currencyCode,
-      Locale locale) {
+  public static String formattedCurrencyAmountWithImplicitSymbol(BigDecimal amount,
+      String currencyCode, Locale locale) {
     final NumberFormat number = NumberFormat.getCurrencyInstance(locale);
     number.setCurrency(java.util.Currency.getInstance(currencyCode));
     return number.format(amount.doubleValue());
@@ -148,8 +186,8 @@ public class SolarNetworkInvoiceFormatter extends DefaultInvoiceFormatter
    * <p>
    * For example, if the {@code currencyCode} is {@literal USD} and the {@code locale} is
    * {@literal en_US} then {@literal 1.99} would be formatted as {@literal US$1.99}. By contrast,
-   * the {@link #formattedCurrencyAmount(BigDecimal, String, Locale)} method would produce
-   * {@literal $1.99}.
+   * the {@link #formattedCurrencyAmountWithImplicitSymbol(BigDecimal, String, Locale)} method would
+   * produce {@literal $1.99}.
    * </p>
    * 
    * @param amount

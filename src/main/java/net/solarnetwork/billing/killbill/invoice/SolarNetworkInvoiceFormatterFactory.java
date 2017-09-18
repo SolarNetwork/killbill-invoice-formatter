@@ -17,12 +17,15 @@ package net.solarnetwork.billing.killbill.invoice;
 
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import org.killbill.billing.callcontext.InternalTenantContext;
 import org.killbill.billing.currency.api.CurrencyConversionApi;
 import org.killbill.billing.invoice.api.Invoice;
 import org.killbill.billing.invoice.api.formatters.InvoiceFormatter;
 import org.killbill.billing.invoice.api.formatters.InvoiceFormatterFactory;
 import org.killbill.billing.invoice.api.formatters.ResourceBundleFactory;
+import org.killbill.billing.util.customfield.dao.CustomFieldDao;
 import org.killbill.billing.util.template.translation.TranslatorConfig;
 
 /**
@@ -32,8 +35,16 @@ import org.killbill.billing.util.template.translation.TranslatorConfig;
  */
 public class SolarNetworkInvoiceFormatterFactory implements InvoiceFormatterFactory {
 
+  private final CustomFieldDao customFieldDao;
+
   public SolarNetworkInvoiceFormatterFactory() {
+    this(null);
+  }
+
+  @Inject
+  public SolarNetworkInvoiceFormatterFactory(CustomFieldDao customFieldDao) {
     super();
+    this.customFieldDao = customFieldDao;
   }
 
   @Override
@@ -41,7 +52,7 @@ public class SolarNetworkInvoiceFormatterFactory implements InvoiceFormatterFact
       Locale locale, CurrencyConversionApi currencyConversionApi,
       ResourceBundleFactory bundleFactory, InternalTenantContext context) {
     return new SolarNetworkInvoiceFormatter(config, invoice, locale, currencyConversionApi,
-        bundleFactory, context);
+        bundleFactory, context, customFieldDao);
   }
 
 }

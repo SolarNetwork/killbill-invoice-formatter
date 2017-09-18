@@ -15,8 +15,8 @@
 
 package net.solarnetwork.billing.killbill.invoice;
 
-import static net.solarnetwork.billing.killbill.invoice.SolarNetworkInvoiceFormatter.formattedCurrencyAmount;
 import static net.solarnetwork.billing.killbill.invoice.SolarNetworkInvoiceFormatter.formattedCurrencyAmountWithExplicitSymbol;
+import static net.solarnetwork.billing.killbill.invoice.SolarNetworkInvoiceFormatter.formattedCurrencyAmountWithImplicitSymbol;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -40,34 +40,36 @@ public class SolarNetworkInvoiceFormaterTests {
 
   @Test
   public void basicMatchingCurrencyAndLocale() {
-    String result = formattedCurrencyAmount(new BigDecimal("1.99"), Currency.NZD.toString(), EN_NZ);
+    String result = formattedCurrencyAmountWithImplicitSymbol(new BigDecimal("1.99"),
+        Currency.NZD.toString(), EN_NZ);
     assertThat("Formatted amount", result, equalTo("$1.99"));
   }
 
   @Test
   public void basicRoundedMatchingCurrencyAndLocale() {
-    String result = formattedCurrencyAmount(new BigDecimal("1.23456"), Currency.NZD.toString(),
-        EN_NZ);
+    String result = formattedCurrencyAmountWithImplicitSymbol(new BigDecimal("1.23456"),
+        Currency.NZD.toString(), EN_NZ);
     assertThat("Formatted amount", result, equalTo("$1.23"));
   }
 
   @Test
   public void basicDifferingCurrencyAndLocale() {
-    String result = formattedCurrencyAmount(new BigDecimal("1.99"), Currency.NZD.toString(),
-        Locale.US);
+    String result = formattedCurrencyAmountWithImplicitSymbol(new BigDecimal("1.99"),
+        Currency.NZD.toString(), Locale.US);
     assertThat("Formatted amount", result, equalTo("NZD1.99"));
   }
 
   @Test
   public void basicDifferingCurrencyAndLocale2() {
-    String result = formattedCurrencyAmount(new BigDecimal("1.99"), Currency.USD.toString(), EN_NZ);
+    String result = formattedCurrencyAmountWithImplicitSymbol(new BigDecimal("1.99"),
+        Currency.USD.toString(), EN_NZ);
     assertThat("Formatted amount", result, equalTo("USD1.99"));
   }
 
   @Test
   public void basicDifferingCurrencyAndLocale3() {
-    String result = formattedCurrencyAmount(new BigDecimal("1.99"), Currency.NZD.toString(),
-        Locale.GERMANY);
+    String result = formattedCurrencyAmountWithImplicitSymbol(new BigDecimal("1.99"),
+        Currency.NZD.toString(), Locale.GERMANY);
     assertThat("Formatted amount", result, equalTo("1,99 NZD"));
   }
 
