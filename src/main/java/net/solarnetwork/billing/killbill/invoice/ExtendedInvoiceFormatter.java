@@ -45,6 +45,22 @@ public interface ExtendedInvoiceFormatter extends InvoiceFormatter {
   List<InvoiceItem> getTaxInvoiceItems();
 
   /**
+   * Get a set of tax invoice items that are grouped by their descriptions into aggregate items that
+   * sum the amount of the grouped items.
+   * 
+   * <p>
+   * This can be used to display a single line item of all similar tax items on the invoice. For
+   * example if there are two {@literal Sales Tax} items with respective amounts of {@literal 1.25}
+   * and {@literal 4.75} this method would return a single invoice item with an amount of
+   * {@literal 6.00}.
+   * </p>
+   * 
+   * @return tax invoice items grouped by description
+   * @see #getTaxInvoiceItems()
+   */
+  List<InvoiceItem> getTaxInvoiceItemsGroupedByDescription();
+
+  /**
    * Get the total amount of all tax invoice items.
    * 
    * @return the total tax amount

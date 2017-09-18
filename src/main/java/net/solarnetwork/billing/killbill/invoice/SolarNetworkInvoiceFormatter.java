@@ -15,15 +15,20 @@
 
 package net.solarnetwork.billing.killbill.invoice;
 
+import static java.util.stream.Collector.of;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
+import static net.solarnetwork.billing.killbill.invoice.AggregateInvoiceItem.itemOfLocale;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -106,6 +111,31 @@ public class SolarNetworkInvoiceFormatter extends DefaultInvoiceFormatter
   @Override
   public List<InvoiceItem> getTaxInvoiceItems() {
     return getTaxInvoiceItemsStream().collect(Collectors.toList());
+  }
+
+  /**
+   * Get an aggregate of tax invoice items, grouped by their descriptions.
+   * 
+   * @return the aggregate items
+   */
+  @Override
+  public List<InvoiceItem> getTaxInvoiceItemsGroupedByDescription() {
+    List<InvoiceItem> taxItems = getTaxInvoiceItems();
+    if (taxItems.isEmpty() || taxItems.size() == 1) {
+      // shortcut for a common case
+      return taxItems;
+    }
+    // maintain ordering based on original invoice items
+    List<UUID> ordering = taxItems.stream().map(item -> item.getId()).collect(toList());
+
+    // return list of AggregateInvoiceItem, grouped by InvoiceItem::getDescription
+    return taxItems.stream()
+        .collect(groupingBy(InvoiceItem::getDescription, of(itemOfLocale(getLocale()),
+            (agg, item) -> agg.addItem((ExtendedInvoiceItemFormatter) item), (agg1, agg2) -> {
+              return agg1.addItems(agg2);
+            })))
+        .values().stream().sorted(Comparator.comparing(item -> ordering.indexOf(item.getId())))
+        .collect(toList());
   }
 
   @Override
