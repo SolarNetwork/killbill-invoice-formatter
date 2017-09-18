@@ -20,11 +20,13 @@ import java.util.List;
 
 import org.killbill.billing.invoice.api.InvoiceItem;
 import org.killbill.billing.invoice.api.formatters.InvoiceFormatter;
+import org.killbill.billing.util.customfield.CustomField;
 
 /**
  * API for extended attributes on {@link InvoiceFormatter}.
  * 
  * @author matt
+ * @version 1
  */
 public interface ExtendedInvoiceFormatter extends InvoiceFormatter {
 
@@ -83,5 +85,12 @@ public interface ExtendedInvoiceFormatter extends InvoiceFormatter {
    * @return the formatted balance amount
    */
   String getBasicFormattedBalance();
+
+  /**
+   * Get all custom fields available to the account owning this invoice.
+   * 
+   * @return all custom fields
+   */
+  List<CustomField> getCustomFields();
 
 }

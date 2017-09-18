@@ -24,6 +24,7 @@ import org.killbill.billing.util.customfield.CustomField;
  * API for extended attributes on {@link InvoiceItemFormatter}.
  * 
  * @author matt
+ * @version 1
  */
 public interface ExtendedInvoiceItemFormatter extends InvoiceItemFormatter {
 
