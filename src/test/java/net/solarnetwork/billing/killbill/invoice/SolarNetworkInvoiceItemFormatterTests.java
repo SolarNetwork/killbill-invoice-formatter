@@ -15,15 +15,66 @@
 
 package net.solarnetwork.billing.killbill.invoice;
 
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertThat;
+import static org.mockito.BDDMockito.given;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+import org.hamcrest.Matchers;
+import org.junit.Test;
+import org.killbill.billing.ObjectType;
+import org.killbill.billing.invoice.api.formatters.InvoiceItemFormatter;
+import org.killbill.billing.util.customfield.CustomField;
+import org.mockito.Mockito;
 
 /**
  * Test cases for the {@link SolarNetworkInvoiceItemFormatter} class.
  * 
  * @author matt
  */
-@RunWith(MockitoJUnitRunner.class)
 public class SolarNetworkInvoiceItemFormatterTests {
 
+  @Test
+  public void subscriptionCustomFieldsEmpty() {
+    // given
+    CustomField field1 = Mockito.mock(CustomField.class);
+    given(field1.getObjectId()).willReturn(UUID.randomUUID());
+    given(field1.getObjectType()).willReturn(ObjectType.SUBSCRIPTION);
+
+    UUID subId = UUID.randomUUID();
+    InvoiceItemFormatter item = Mockito.mock(InvoiceItemFormatter.class);
+    given(item.getSubscriptionId()).willReturn(subId);
+
+    // when
+    SolarNetworkInvoiceItemFormatter fmt = new SolarNetworkInvoiceItemFormatter(item,
+        Arrays.asList(field1));
+    List<CustomField> fields = fmt.getSubscriptionCustomFields();
+    assertThat("Field count", fields, hasSize(0));
+  }
+
+  @Test
+  public void subscriptionCustomFieldFiltered() {
+    // given
+    CustomField field1 = Mockito.mock(CustomField.class);
+    given(field1.getObjectId()).willReturn(UUID.randomUUID());
+    given(field1.getObjectType()).willReturn(ObjectType.SUBSCRIPTION);
+
+    UUID subId = UUID.randomUUID();
+    CustomField field2 = Mockito.mock(CustomField.class);
+    given(field2.getObjectId()).willReturn(subId);
+    given(field2.getObjectType()).willReturn(ObjectType.SUBSCRIPTION);
+
+    InvoiceItemFormatter item = Mockito.mock(InvoiceItemFormatter.class);
+    given(item.getSubscriptionId()).willReturn(subId);
+
+    // when
+    SolarNetworkInvoiceItemFormatter fmt = new SolarNetworkInvoiceItemFormatter(item,
+        Arrays.asList(field1, field2));
+    List<CustomField> fields = fmt.getSubscriptionCustomFields();
+    assertThat("Field count", fields, hasSize(1));
+    assertThat("Sub field", fields.get(0), Matchers.sameInstance(field2));
+  }
 }

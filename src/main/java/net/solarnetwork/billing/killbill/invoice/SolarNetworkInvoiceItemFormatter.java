@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.killbill.billing.ObjectType;
 import org.killbill.billing.catalog.api.Currency;
 import org.killbill.billing.invoice.api.InvoiceItemType;
 import org.killbill.billing.invoice.api.formatters.InvoiceItemFormatter;
@@ -59,8 +60,8 @@ public class SolarNetworkInvoiceItemFormatter implements ExtendedInvoiceItemForm
       return Collections.emptyList();
     }
     final UUID subscriptionId = getSubscriptionId();
-    return customFields.stream().filter(f -> subscriptionId.equals(f.getObjectId()))
-        .collect(Collectors.toList());
+    return customFields.stream().filter(f -> ObjectType.SUBSCRIPTION.equals(f.getObjectType())
+        && subscriptionId.equals(f.getObjectId())).collect(Collectors.toList());
   }
 
   @Override
