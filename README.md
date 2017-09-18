@@ -45,3 +45,12 @@ Then, the following property must be updated in `killbill.properties`:
 ```
 org.killbill.template.invoiceFormatterFactoryClass = net.solarnetwork.billing.killbill.invoice.SolarNetworkInvoiceFormatterFactory
 ```
+
+Releases
+--------
+
+Releases can be executed like this:
+
+```
+./gradlew release --console plain
+```
