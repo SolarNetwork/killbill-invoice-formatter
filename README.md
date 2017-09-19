@@ -1,12 +1,33 @@
 SolarNetwork Kill Bill Invoice Formatter
 ========================================
 
-Extended version of the default Kill Bill invoice formatter, exposing some additional attributes for
-invoice templates to work with.
+An extended version of the default Kill Bill invoice formatter, exposing some additional attributes
+for invoice templates to work with.
+
+For example, imagine an invoice with 2 taxable items and 2 tax items in it, like this:
+
+| Item ID  | Type    | Description  | Amount |
+| -------- | ------- |------------- | -----: |
+| f6512175 | `USAGE` | Monthly Use  |  18.59 |
+| a2ae679d | `USAGE` | Monthly Use  |  18.59 |
+| 87afecdc | `TAX`   | GST          |   2.79 |
+| d91a6f89 | `TAX`   | GST          |   2.79 |
+
+The goal of the invoice is to list only non-`TAX` items in the main list, and then combine all `TAX`
+items into a single value. The result looks like this:
+
+![invoice](src/docs/invoice-annotated.png)
+
+The example also shows how custom fields attached to subscriptions can be included on the invoice.
 
 
 Additional Template Attributes
 ------------------------------
+
+This invoice formatter extends both the top-level `invoice` object passed to the template as well as
+all the items returned from attributes like `invoice.invoiceItems`. The tables below outline just
+the extended attributes added on top of the existing attributes provided by the built-in Kill Bill
+classes.
 
 ### Invoice attributes
 
@@ -59,7 +80,7 @@ The following attributes are available on each custom field object:
 | `objectType` | Enum | The `org.killbill.billing.ObjectType` of the object the custom field is associated with. |
 
 
-Kill Bill compatibility
+Kill Bill Compatibility
 -----------------------
 
 | Plugin version | Kill Bill version |
