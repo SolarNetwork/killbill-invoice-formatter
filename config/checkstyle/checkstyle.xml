@@ -184,6 +184,9 @@ Checkstyle configuration that checks the Google coding conventions from Google J
   <module name="FileTabCharacter">
     <property name="eachLine" value="true"/>
   </module>
+  <module name="SuppressionFilter">
+    <property name="file" value="${config_loc}/suppressions.xml"/>
+  </module>
   <module name="SuppressWithNearbyCommentFilter">
     <property name="commentFormat" value="CHECKSTYLE IGNORE (\w+) FOR NEXT (\d+) LINE"/>
     <property name="checkFormat" value="$1"/>
