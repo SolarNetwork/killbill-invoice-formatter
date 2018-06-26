@@ -11,19 +11,32 @@ repositories {
     jcenter()
 }
 
+wrapper {
+	gradleVersion = "4.1"
+}
+
 ext {
-	slf4jVersion = "1.7.25"
+	kbVersion = '0.18.20'
+	slf4jVersion = '1.7.25'
 }
 
 checkstyle {
-   toolVersion "8.0"
+   toolVersion '8.0'
+}
+
+configurations.all {
+    resolutionStrategy { 
+        force "org.kill-bill.billing:killbill-internal-api:${kbVersion}"
+        force "org.kill-bill.billing:killbill-invoice:${kbVersion}"
+        force "org.kill-bill.billing:killbill-util:${kbVersion}"
+    }
 }
 
 dependencies {
 	compile "org.slf4j:slf4j-api:${slf4jVersion}"
-	compile "org.kill-bill.billing:killbill-internal-api:0.18.12"
-	compile "org.kill-bill.billing:killbill-invoice:0.18.12"
-	compile "org.kill-bill.billing:killbill-util:0.18.12"
+	compile "org.kill-bill.billing:killbill-internal-api:${kbVersion}"
+	compile "org.kill-bill.billing:killbill-invoice:${kbVersion}"
+	compile "org.kill-bill.billing:killbill-util:${kbVersion}"
 
     // Testing
     testCompile "ch.qos.logback:logback-classic:1.1.11"
