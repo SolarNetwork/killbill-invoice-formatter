@@ -42,6 +42,7 @@ The following additional attributes are available on the `invoice` top-level tem
 | `formattedTaxAmount` | String | Formatted version of `taxAmount`. |
 | `nonTaxChargedAmount` | Number | Sum total of all `nonTaxInvoiceItems`. |
 | `nonTaxInvoiceItems` | List of invoice items | Filtered copy of all invoice items _except_ `TAX` items. |
+| `nonTaxInvoiceItemsSortedBySubscriptionCustomFields` | List of invoice items | Filtered copy of all invoice items _except_ `TAX` items, sorted by subscription custom field values and then item descriptions. |
 | `taxAmount` | Number | Sum total of all `TAX` invoice items. |
 | `taxInvoiceItems` | List of invoice items | Filtered copy of _only_ `TAX` invoice items. |
 | `taxInvoiceItemsGroupedByDescription` | List of invoice items | The `taxInvoiceItems` list aggregated by item description. |
@@ -57,6 +58,11 @@ items into a single item, based on their descriptions. For example, imagine an i
 items, both with a description of `GST`, for the respective amounts `1.50` and `1.25`. The
 `taxInvoiceItemsGroupedByDescription` attribute will return a list of a single `GST` item with an
 amount of `2.75`.
+
+The `nonTaxInvoiceItemsSortedBySubscriptionCustomFields` property provides a list of invoice items
+sorted first by any subscription custom field _values_ followed by item descriptions. Looking back
+at the screenshot shown earlier in this document, the **Node** column values are from a custom
+field. In effect, this list will order invoice items for the same "node" next to one another.
 
 ### Invoice item attributes
 
