@@ -26,7 +26,7 @@ import org.killbill.billing.util.customfield.CustomField;
  * API for extended attributes on {@link InvoiceFormatter}.
  * 
  * @author matt
- * @version 1
+ * @version 2
  */
 public interface ExtendedInvoiceFormatter extends InvoiceFormatter {
 
@@ -36,6 +36,15 @@ public interface ExtendedInvoiceFormatter extends InvoiceFormatter {
    * @return the items, or an empty list
    */
   List<InvoiceItem> getNonTaxInvoiceItems();
+
+  /**
+   * Get a list of all non-tax invoice items, sorted by subscription custom fields and then
+   * subscription description.
+   * 
+   * @return the the items, or an empty list
+   * @since 2
+   */
+  List<InvoiceItem> getNonTaxInvoiceItemsSortedBySubscriptionCustomFields();
 
   /**
    * Get a list of all tax invoice items.

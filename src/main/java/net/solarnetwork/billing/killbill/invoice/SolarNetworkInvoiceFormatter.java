@@ -56,6 +56,9 @@ import org.killbill.billing.util.template.translation.TranslatorConfig;
 public class SolarNetworkInvoiceFormatter extends DefaultInvoiceFormatter
     implements ExtendedInvoiceFormatter {
 
+  // CHECKSTYLE IGNORE LineLength FOR NEXT 1 LINE
+  private static final Comparator<InvoiceItemFormatter> CUSTOM_FIELD_SORT = new CustomFieldsThenDescriptionComparator();
+
   private final InternalTenantContext tenantContext;
 
   private List<CustomField> customFields;
@@ -101,6 +104,13 @@ public class SolarNetworkInvoiceFormatter extends DefaultInvoiceFormatter
   @Override
   public List<InvoiceItem> getNonTaxInvoiceItems() {
     return getNonTaxInvoiceItemStream().collect(Collectors.toList());
+  }
+
+  @Override
+  public List<InvoiceItem> getNonTaxInvoiceItemsSortedBySubscriptionCustomFields() {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    Stream<InvoiceItemFormatter> itemStream = (Stream) getNonTaxInvoiceItemStream();
+    return itemStream.sorted(CUSTOM_FIELD_SORT).collect(Collectors.toList());
   }
 
   private Stream<InvoiceItem> getTaxInvoiceItemsStream() {
