@@ -91,7 +91,7 @@ Kill Bill Compatibility
 
 | Plugin version | Kill Bill version |
 | -------------: | ----------------: |
-| 0.1.y          | 0.18.z            |
+| 0.x.y          | 0.18.z            |
 
 
 Deployment
