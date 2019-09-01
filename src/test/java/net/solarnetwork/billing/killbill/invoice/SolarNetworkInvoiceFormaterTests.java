@@ -19,6 +19,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static net.solarnetwork.billing.killbill.invoice.SolarNetworkInvoiceFormatter.formattedCurrencyAmountWithExplicitSymbol;
 import static net.solarnetwork.billing.killbill.invoice.SolarNetworkInvoiceFormatter.formattedCurrencyAmountWithImplicitSymbol;
+import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
@@ -117,21 +118,21 @@ public class SolarNetworkInvoiceFormaterTests {
   public void basicDifferingCurrencyAndLocale() {
     String result = formattedCurrencyAmountWithImplicitSymbol(new BigDecimal("1.99"),
         Currency.NZD.toString(), Locale.US);
-    assertThat("Formatted amount", result, equalTo("NZD1.99"));
+    assertThat("Formatted amount", result, anyOf(equalTo("NZD1.99"), equalTo("NZ$1.99")));
   }
 
   @Test
   public void basicDifferingCurrencyAndLocale2() {
     String result = formattedCurrencyAmountWithImplicitSymbol(new BigDecimal("1.99"),
         Currency.USD.toString(), EN_NZ);
-    assertThat("Formatted amount", result, equalTo("USD1.99"));
+    assertThat("Formatted amount", result, anyOf(equalTo("USD1.99"), equalTo("US$1.99")));
   }
 
   @Test
   public void basicDifferingCurrencyAndLocale3() {
     String result = formattedCurrencyAmountWithImplicitSymbol(new BigDecimal("1.99"),
         Currency.NZD.toString(), Locale.GERMANY);
-    assertThat("Formatted amount", result, equalTo("1,99 NZD"));
+    assertThat("Formatted amount", result, anyOf(equalTo("1,99 NZD"), equalTo("1,99 NZ$")));
   }
 
   @Test
