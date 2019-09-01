@@ -60,6 +60,9 @@ public class SolarNetworkInvoiceItemFormatter implements ExtendedInvoiceItemForm
       return Collections.emptyList();
     }
     final UUID subscriptionId = getSubscriptionId();
+    if (subscriptionId == null) {
+      return Collections.emptyList();
+    }
     return customFields.stream().filter(f -> ObjectType.SUBSCRIPTION.equals(f.getObjectType())
         && subscriptionId.equals(f.getObjectId())).collect(Collectors.toList());
   }

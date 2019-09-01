@@ -56,6 +56,23 @@ public class SolarNetworkInvoiceItemFormatterTests {
   }
 
   @Test
+  public void subscriptionIdMissing() {
+    // given
+    CustomField field1 = Mockito.mock(CustomField.class);
+    given(field1.getObjectId()).willReturn(UUID.randomUUID());
+    given(field1.getObjectType()).willReturn(ObjectType.SUBSCRIPTION);
+
+    InvoiceItemFormatter item = Mockito.mock(InvoiceItemFormatter.class);
+    given(item.getSubscriptionId()).willReturn(null);
+
+    // when
+    SolarNetworkInvoiceItemFormatter fmt = new SolarNetworkInvoiceItemFormatter(item,
+        Arrays.asList(field1));
+    List<CustomField> fields = fmt.getSubscriptionCustomFields();
+    assertThat("Field count", fields, hasSize(0));
+  }
+
+  @Test
   public void subscriptionCustomFieldFiltered() {
     // given
     CustomField field1 = Mockito.mock(CustomField.class);
