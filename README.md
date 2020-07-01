@@ -92,6 +92,7 @@ Kill Bill Compatibility
 | Plugin version | Kill Bill version |
 | -------------: | ----------------: |
 | 0.x.y          | 0.18.z            |
+| 2.x.y          | 0.22.z            |
 
 
 Deployment

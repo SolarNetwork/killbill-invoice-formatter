@@ -16,7 +16,7 @@ wrapper {
 }
 
 ext {
-	kbVersion = '0.18.20'
+	kbVersion = '0.22.10'
 	slf4jVersion = '1.7.25'
 }
 
@@ -65,10 +65,6 @@ jar {
         attributes "Implementation-Title": "SolarNetwork Kill Bill Invoice Formatter",
                    "Implementation-Version": version
     }
-}
-
-wrapper {
-	gradleVersion = "4.1"
 }
 
 bintray {

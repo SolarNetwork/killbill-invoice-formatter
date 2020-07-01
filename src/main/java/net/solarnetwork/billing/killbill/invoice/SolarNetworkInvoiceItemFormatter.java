@@ -33,6 +33,7 @@ import org.killbill.billing.util.customfield.CustomField;
  * Implementation of {@link ExtendedInvoiceItemFormatter}.
  * 
  * @author matt
+ * @version 2
  */
 public class SolarNetworkInvoiceItemFormatter implements ExtendedInvoiceItemFormatter {
 
@@ -180,6 +181,46 @@ public class SolarNetworkInvoiceItemFormatter implements ExtendedInvoiceItemForm
   @Override
   public boolean matches(Object other) {
     return item.matches(other);
+  }
+
+  @Override
+  public String getProductName() {
+    return item.getProductName();
+  }
+
+  @Override
+  public String getPrettyProductName() {
+    return item.getPrettyProductName();
+  }
+
+  @Override
+  public String getPrettyPlanName() {
+    return item.getPrettyPlanName();
+  }
+
+  @Override
+  public String getPrettyPhaseName() {
+    return item.getPrettyPhaseName();
+  }
+
+  @Override
+  public String getPrettyUsageName() {
+    return item.getPrettyUsageName();
+  }
+
+  @Override
+  public Integer getQuantity() {
+    return item.getQuantity();
+  }
+
+  @Override
+  public String getItemDetails() {
+    return item.getItemDetails();
+  }
+
+  @Override
+  public DateTime getCatalogEffectiveDate() {
+    return item.getCatalogEffectiveDate();
   }
 
 }

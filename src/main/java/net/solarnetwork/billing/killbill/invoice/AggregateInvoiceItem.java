@@ -43,6 +43,7 @@ import org.killbill.billing.util.customfield.CustomField;
  * </p>
  * 
  * @author matt
+ * @version 2
  */
 public class AggregateInvoiceItem implements ExtendedInvoiceItemFormatter {
 
@@ -240,6 +241,46 @@ public class AggregateInvoiceItem implements ExtendedInvoiceItemFormatter {
   @Override
   public boolean matches(Object other) {
     return firstItem.matches(other);
+  }
+
+  @Override
+  public String getProductName() {
+    return firstItem.getProductName();
+  }
+
+  @Override
+  public String getPrettyProductName() {
+    return firstItem.getPrettyProductName();
+  }
+
+  @Override
+  public String getPrettyPlanName() {
+    return firstItem.getPrettyPlanName();
+  }
+
+  @Override
+  public String getPrettyPhaseName() {
+    return firstItem.getPrettyPhaseName();
+  }
+
+  @Override
+  public String getPrettyUsageName() {
+    return firstItem.getPrettyUsageName();
+  }
+
+  @Override
+  public Integer getQuantity() {
+    return firstItem.getQuantity();
+  }
+
+  @Override
+  public String getItemDetails() {
+    return firstItem.getItemDetails();
+  }
+
+  @Override
+  public DateTime getCatalogEffectiveDate() {
+    return firstItem.getCatalogEffectiveDate();
   }
 
 }
