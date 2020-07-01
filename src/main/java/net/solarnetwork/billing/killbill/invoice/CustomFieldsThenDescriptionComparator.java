@@ -29,8 +29,9 @@ import org.killbill.billing.util.customfield.CustomField;
  */
 public class CustomFieldsThenDescriptionComparator implements Comparator<InvoiceItemFormatter> {
 
-  // CHECKSTYLE IGNORE LineLength FOR NEXT 1 LINE
+  // CHECKSTYLE OFF: LineLength
   private static final Comparator<CustomField> CUSTOM_FIELD_SORT_BY_NAME = new CaseInsensitiveCustomFieldNameComparator();
+  // CHECKSTYLE ON: LineLength
 
   @Override
   public int compare(InvoiceItemFormatter o1, InvoiceItemFormatter o2) {

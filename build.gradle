@@ -21,7 +21,7 @@ ext {
 }
 
 checkstyle {
-   toolVersion '8.5'
+   toolVersion '8.32'
 }
 
 configurations.all {

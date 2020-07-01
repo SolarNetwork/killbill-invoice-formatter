@@ -56,8 +56,9 @@ import org.killbill.billing.util.template.translation.TranslatorConfig;
 public class SolarNetworkInvoiceFormatter extends DefaultInvoiceFormatter
     implements ExtendedInvoiceFormatter {
 
-  // CHECKSTYLE IGNORE LineLength FOR NEXT 1 LINE
+  // CHECKSTYLE OFF: LineLength
   private static final Comparator<InvoiceItemFormatter> CUSTOM_FIELD_SORT = new CustomFieldsThenDescriptionComparator();
+  // CHECKSTYLE ON: LineLength
 
   private final InternalTenantContext tenantContext;
 
