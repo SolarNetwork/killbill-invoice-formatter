@@ -15,6 +15,9 @@
 
 package net.solarnetwork.billing.killbill.invoice;
 
+import static java.util.stream.Collectors.toList;
+
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -25,7 +28,10 @@ import org.killbill.billing.invoice.api.Invoice;
 import org.killbill.billing.invoice.api.formatters.InvoiceFormatter;
 import org.killbill.billing.invoice.api.formatters.InvoiceFormatterFactory;
 import org.killbill.billing.invoice.api.formatters.ResourceBundleFactory;
+import org.killbill.billing.util.customfield.CustomField;
+import org.killbill.billing.util.customfield.StringCustomField;
 import org.killbill.billing.util.customfield.dao.CustomFieldDao;
+import org.killbill.billing.util.customfield.dao.CustomFieldModelDao;
 import org.killbill.billing.util.template.translation.TranslatorConfig;
 
 /**
@@ -51,8 +57,15 @@ public class SolarNetworkInvoiceFormatterFactory implements InvoiceFormatterFact
   public InvoiceFormatter createInvoiceFormatter(TranslatorConfig config, Invoice invoice,
       Locale locale, CurrencyConversionApi currencyConversionApi,
       ResourceBundleFactory bundleFactory, InternalTenantContext context) {
+    List<CustomField> customFields = null;
+    if (this.customFieldDao != null) {
+      List<CustomFieldModelDao> fields = this.customFieldDao.getCustomFieldsForAccount(context);
+      if (fields != null) {
+        customFields = fields.stream().map(f -> new StringCustomField(f)).collect(toList());
+      }
+    }
     return new SolarNetworkInvoiceFormatter(config, invoice, locale, currencyConversionApi,
-        bundleFactory, context, customFieldDao);
+        bundleFactory, context, customFields);
   }
 
 }

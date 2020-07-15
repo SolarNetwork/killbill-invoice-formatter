@@ -19,17 +19,25 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
+import static org.mockito.BDDMockito.given;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.killbill.billing.ObjectType;
 import org.killbill.billing.callcontext.InternalTenantContext;
 import org.killbill.billing.currency.api.CurrencyConversionApi;
 import org.killbill.billing.invoice.api.Invoice;
 import org.killbill.billing.invoice.api.formatters.InvoiceFormatter;
 import org.killbill.billing.invoice.api.formatters.ResourceBundleFactory;
+import org.killbill.billing.util.customfield.dao.CustomFieldDao;
+import org.killbill.billing.util.customfield.dao.CustomFieldModelDao;
 import org.killbill.billing.util.template.translation.TranslatorConfig;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -41,6 +49,9 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class SolarNetworkInvoiceFormatterFactoryTests {
+
+  private static final String ACCOUNT_FIELD = "accField";
+  private static final String SUBSCRIPTION_FIELD = "subField";
 
   @Mock
   private TranslatorConfig config;
@@ -57,15 +68,30 @@ public class SolarNetworkInvoiceFormatterFactoryTests {
   @Mock
   InternalTenantContext context;
 
+  @Mock
+  private CustomFieldDao customFieldDao;
+
   private SolarNetworkInvoiceFormatterFactory factory;
+  private DateTime now;
+  private UUID accountId;
+  private UUID subscriptionId;
 
   @Before
   public void setup() {
+    now = new DateTime();
+    accountId = UUID.randomUUID();
+    subscriptionId = UUID.randomUUID();
     factory = new SolarNetworkInvoiceFormatterFactory();
   }
 
   @Test
   public void produce() {
+    List<CustomFieldModelDao> daoCustomFields = Arrays.asList(
+        new CustomFieldModelDao(now, ACCOUNT_FIELD, "acc", accountId, ObjectType.ACCOUNT),
+        new CustomFieldModelDao(now, SUBSCRIPTION_FIELD, "sub", subscriptionId,
+            ObjectType.SUBSCRIPTION));
+    given(customFieldDao.getCustomFieldsForAccount(context)).willReturn(daoCustomFields);
+
     InvoiceFormatter formatter = factory.createInvoiceFormatter(config, invoice, Locale.US,
         currencyConversionApi, bundleFactory, context);
 
@@ -73,8 +99,16 @@ public class SolarNetworkInvoiceFormatterFactoryTests {
         instanceOf(SolarNetworkInvoiceFormatter.class));
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   public void produceDifferentInstances() {
+    List<CustomFieldModelDao> daoCustomFields = Arrays.asList(
+        new CustomFieldModelDao(now, ACCOUNT_FIELD, "acc", accountId, ObjectType.ACCOUNT),
+        new CustomFieldModelDao(now, SUBSCRIPTION_FIELD, "sub", subscriptionId,
+            ObjectType.SUBSCRIPTION));
+    given(customFieldDao.getCustomFieldsForAccount(context)).willReturn(daoCustomFields,
+        daoCustomFields);
+
     InvoiceFormatter formatter1 = factory.createInvoiceFormatter(config, invoice, Locale.US,
         currencyConversionApi, bundleFactory, context);
     InvoiceFormatter formatter2 = factory.createInvoiceFormatter(config, invoice, Locale.US,

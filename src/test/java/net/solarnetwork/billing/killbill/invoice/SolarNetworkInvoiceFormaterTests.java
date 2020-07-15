@@ -46,8 +46,7 @@ import org.killbill.billing.invoice.api.InvoiceItem;
 import org.killbill.billing.invoice.api.InvoiceItemType;
 import org.killbill.billing.invoice.api.formatters.ResourceBundleFactory;
 import org.killbill.billing.util.customfield.CustomField;
-import org.killbill.billing.util.customfield.dao.CustomFieldDao;
-import org.killbill.billing.util.customfield.dao.CustomFieldModelDao;
+import org.killbill.billing.util.customfield.StringCustomField;
 import org.killbill.billing.util.template.translation.TranslatorConfig;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -73,9 +72,6 @@ public class SolarNetworkInvoiceFormaterTests {
   private static final BigDecimal AMOUNT_4 = new BigDecimal("4.99");
   private static final String GST = "GST";
   private static final String VAT = "VAT";
-
-  @Mock
-  private CustomFieldDao customFieldDao;
 
   @Mock
   private TranslatorConfig translatorConfig;
@@ -157,8 +153,13 @@ public class SolarNetworkInvoiceFormaterTests {
   }
 
   private SolarNetworkInvoiceFormatter createDefaultFormatter(Invoice invoice, Locale locale) {
+    return createDefaultFormatter(invoice, locale, null);
+  }
+
+  private SolarNetworkInvoiceFormatter createDefaultFormatter(Invoice invoice, Locale locale,
+      List<CustomField> fields) {
     return new SolarNetworkInvoiceFormatter(translatorConfig, invoice, locale,
-        currencyConversionApi, resourceBundleFactory, internalTenantContext, customFieldDao);
+        currencyConversionApi, resourceBundleFactory, internalTenantContext, fields);
   }
 
   private Invoice createInvoice(List<InvoiceItem> items) {
@@ -167,8 +168,7 @@ public class SolarNetworkInvoiceFormaterTests {
     return invoice;
   }
 
-  private static void assertCustomFieldsEqual(String msg, CustomField field,
-      CustomFieldModelDao expected) {
+  private static void assertCustomFieldsEqual(String msg, CustomField field, CustomField expected) {
     assertThat(msg + " name", field.getFieldName(), equalTo(expected.getFieldName()));
     assertThat(msg + " value", field.getFieldValue(), equalTo(expected.getFieldValue()));
   }
@@ -176,39 +176,36 @@ public class SolarNetworkInvoiceFormaterTests {
   @Test
   public void invoiceCustomFields() {
     // given
-    List<CustomFieldModelDao> daoCustomFields = Arrays.asList(
-        new CustomFieldModelDao(now, ACCOUNT_FIELD, "acc", accountId, ObjectType.ACCOUNT),
-        new CustomFieldModelDao(now, SUBSCRIPTION_FIELD, "sub", subscriptionId,
-            ObjectType.SUBSCRIPTION));
-    given(customFieldDao.getCustomFieldsForAccount(internalTenantContext))
-        .willReturn(daoCustomFields);
+    List<CustomField> fields = Arrays.asList(
+        new StringCustomField(ACCOUNT_FIELD, "acc", ObjectType.ACCOUNT, accountId, now),
+        new StringCustomField(SUBSCRIPTION_FIELD, "sub", ObjectType.SUBSCRIPTION, subscriptionId,
+            now));
 
-    SolarNetworkInvoiceFormatter fmt = createDefaultFormatter(createInvoice(emptyList()), EN_NZ);
+    SolarNetworkInvoiceFormatter fmt = createDefaultFormatter(createInvoice(emptyList()), EN_NZ,
+        fields);
 
     // when
     List<CustomField> customFields = fmt.getCustomFields();
     assertThat("Custom fields", customFields, hasSize(2));
 
     // then
-    assertCustomFieldsEqual("Field 1", customFields.get(0), daoCustomFields.get(0));
-    assertCustomFieldsEqual("Field 2", customFields.get(0), daoCustomFields.get(0));
+    assertCustomFieldsEqual("Field 1", customFields.get(0), fields.get(0));
+    assertCustomFieldsEqual("Field 2", customFields.get(1), fields.get(1));
   }
 
   @Test
   public void invoiceItemSubscriptionCustomFields() {
     // given
-    List<CustomFieldModelDao> daoCustomFields = Arrays.asList(
-        new CustomFieldModelDao(now, ACCOUNT_FIELD, "acc", accountId, ObjectType.ACCOUNT),
-        new CustomFieldModelDao(now, SUBSCRIPTION_FIELD, "sub", subscriptionId,
-            ObjectType.SUBSCRIPTION));
-    given(customFieldDao.getCustomFieldsForAccount(internalTenantContext))
-        .willReturn(daoCustomFields);
+    List<CustomField> fields = Arrays.asList(
+        new StringCustomField(ACCOUNT_FIELD, "acc", ObjectType.ACCOUNT, accountId, now),
+        new StringCustomField(SUBSCRIPTION_FIELD, "sub", ObjectType.SUBSCRIPTION, subscriptionId,
+            now));
 
     InvoiceItem item = Mockito.mock(InvoiceItem.class);
     given(item.getSubscriptionId()).willReturn(subscriptionId);
     List<InvoiceItem> items = asList(item);
 
-    SolarNetworkInvoiceFormatter fmt = createDefaultFormatter(createInvoice(items), EN_NZ);
+    SolarNetworkInvoiceFormatter fmt = createDefaultFormatter(createInvoice(items), EN_NZ, fields);
 
     // when
     List<InvoiceItem> fmtItems = fmt.getInvoiceItems();
@@ -221,7 +218,7 @@ public class SolarNetworkInvoiceFormaterTests {
     List<CustomField> subFields = ((ExtendedInvoiceItemFormatter) fmtItem)
         .getSubscriptionCustomFields();
     assertThat("Format items", fmtItems, hasSize(1));
-    assertCustomFieldsEqual("Sub field", subFields.get(0), daoCustomFields.get(1));
+    assertCustomFieldsEqual("Sub field", subFields.get(0), fields.get(1));
   }
 
   @Test

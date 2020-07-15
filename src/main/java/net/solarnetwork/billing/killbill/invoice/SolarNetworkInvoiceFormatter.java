@@ -43,15 +43,13 @@ import org.killbill.billing.invoice.api.formatters.InvoiceItemFormatter;
 import org.killbill.billing.invoice.api.formatters.ResourceBundleFactory;
 import org.killbill.billing.invoice.template.formatters.DefaultInvoiceFormatter;
 import org.killbill.billing.util.customfield.CustomField;
-import org.killbill.billing.util.customfield.StringCustomField;
-import org.killbill.billing.util.customfield.dao.CustomFieldDao;
-import org.killbill.billing.util.customfield.dao.CustomFieldModelDao;
 import org.killbill.billing.util.template.translation.TranslatorConfig;
 
 /**
  * Implementation of {@link ExtendedInvoiceFormatter} for SolarNetwork.
  * 
  * @author matt
+ * @version 2
  */
 public class SolarNetworkInvoiceFormatter extends DefaultInvoiceFormatter
     implements ExtendedInvoiceFormatter {
@@ -60,9 +58,8 @@ public class SolarNetworkInvoiceFormatter extends DefaultInvoiceFormatter
   private static final Comparator<InvoiceItemFormatter> CUSTOM_FIELD_SORT = new CustomFieldsThenDescriptionComparator();
   // CHECKSTYLE ON: LineLength
 
-  private final InternalTenantContext tenantContext;
+  private final List<CustomField> customFields;
 
-  private List<CustomField> customFields;
   private List<InvoiceItem> invoiceItems;
 
   /**
@@ -80,21 +77,14 @@ public class SolarNetworkInvoiceFormatter extends DefaultInvoiceFormatter
    *          the bundle factory
    * @param context
    *          the context
-   * @param customFieldDao
-   *          DAO to lookup custom fields related to the invoice
+   * @param customFields
+   *          account custom fields (optional)
    */
   public SolarNetworkInvoiceFormatter(TranslatorConfig config, Invoice invoice, Locale locale,
       CurrencyConversionApi currencyConversionApi, ResourceBundleFactory bundleFactory,
-      InternalTenantContext context, CustomFieldDao customFieldDao) {
+      InternalTenantContext context, List<CustomField> customFields) {
     super(config, invoice, locale, currencyConversionApi, bundleFactory, context);
-    this.tenantContext = context;
-
-    List<CustomFieldModelDao> daoCustomFields = Collections.emptyList();
-    if (customFieldDao != null) {
-      daoCustomFields = customFieldDao.getCustomFieldsForAccount(tenantContext);
-    }
-    this.customFields = daoCustomFields.stream().map(f -> new StringCustomField(f))
-        .collect(toList());
+    this.customFields = (customFields != null ? customFields : Collections.emptyList());
   }
 
   private Stream<InvoiceItem> getNonTaxInvoiceItemStream() {
