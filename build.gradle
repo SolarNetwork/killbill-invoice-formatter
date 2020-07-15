@@ -2,9 +2,10 @@ plugins {
     id 'java'
     id 'checkstyle'
     id 'eclipse'
+    id 'maven-publish'
     id 'net.saliman.properties' version '1.4.6'
     id 'net.researchgate.release' version '2.6.0'
-    id 'com.jfrog.bintray' version '1.7.3'
+    id 'com.jfrog.bintray' version '1.8.5'
 }
 
 repositories {
@@ -59,11 +60,56 @@ eclipse {
 	}
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 jar {
     version =  version
     manifest {
         attributes "Implementation-Title": "SolarNetwork Kill Bill Invoice Formatter",
                    "Implementation-Version": version
+    }
+}
+
+def pomConfig = {
+    licenses {
+        license {
+            name "The Apache Software License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution "repo"
+        }
+    }
+    developers {
+        developer {
+            id "SolarNetwork"
+            name "SolarNetwork"
+            email "code@solarnetwork.net"
+        }
+    }   
+    scm {
+       url "https://github.com/SolarNetwork/killbill-invoice-formatter.git"
+    }
+}
+
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            groupId 'net.solarnetwork.billing'
+            artifactId 'killbill-invoice-formatter'
+            version version
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'SolarNetwork Kill Bill Invoice Formatter')
+                root.appendNode('name', 'killbill-invoice-formatter')
+                root.appendNode('url', 'https://github.com/SolarNetwork/killbill-invoice-formatter')
+                root.children().last() + pomConfig
+            }
+        }
     }
 }
 
