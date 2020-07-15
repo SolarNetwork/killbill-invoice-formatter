@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'java-library'
     id 'checkstyle'
     id 'eclipse'
     id 'maven'
@@ -102,8 +102,6 @@ publishing {
     publications {
         MyPublication(MavenPublication) {
             from components.java
-            artifact sourcesJar
-            artifact javadocJar
             groupId project.group
             artifactId project.archivesBaseName
             version project.version
