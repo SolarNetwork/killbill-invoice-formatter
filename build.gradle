@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'checkstyle'
     id 'eclipse'
+    id 'maven'
     id 'maven-publish'
     id 'net.saliman.properties' version '1.4.6'
     id 'net.researchgate.release' version '2.6.0'
@@ -24,6 +25,10 @@ ext {
 checkstyle {
    toolVersion '8.32'
 }
+
+archivesBaseName = 'sn-killbill-invoice-formatter'
+group = 'net.solarnetwork.billing'
+description = 'SolarNetwork Kill Bill Invoice Formatter'
 
 configurations.all {
     resolutionStrategy { 
@@ -99,9 +104,9 @@ publishing {
             from components.java
             artifact sourcesJar
             artifact javadocJar
-            groupId 'net.solarnetwork.billing'
-            artifactId 'killbill-invoice-formatter'
-            version version
+            groupId project.group
+            artifactId project.archivesBaseName
+            version project.version
             pom.withXml {
                 def root = asNode()
                 root.appendNode('description', 'SolarNetwork Kill Bill Invoice Formatter')
@@ -116,6 +121,8 @@ publishing {
 bintray {
     user = bintray_user
     key = bintray_key
+    publications = ['MyPublication']
+    publish = true
     configurations = ['archives']
     pkg {
         repo = 'SolarNetwork'
@@ -126,10 +133,10 @@ bintray {
         issueTrackerUrl = 'https://github.com/SolarNetwork/killbill-invoice-formatter/issues'
         vcsUrl = 'https://github.com/SolarNetwork/killbill-invoice-formatter.git'
         version {
-            name = "${version}"
-            desc = "SolarNetwork Kill Bill Invoice Formatter ${version}"
+            name = project.version
+            desc = project.description
             released  = new Date()
-            vcsTag = "${version}"
+            vcsTag = project.version
             attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin']
             gpg {
                 sign = true
