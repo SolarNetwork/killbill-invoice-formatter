@@ -1,0 +1,125 @@
+/*  Copyright 2020 SolarNetwork Foundation
+ *  
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *  
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *  
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+package net.solarnetwork.billing.killbill.invoice.notification;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.killbill.billing.invoice.api.Invoice;
+import org.killbill.billing.invoice.api.InvoiceItem;
+import org.killbill.billing.plugin.notification.generator.formatters.DefaultInvoiceFormatter;
+import org.killbill.billing.util.customfield.CustomField;
+
+import net.solarnetwork.billing.killbill.invoice.api.ExtendedInvoiceFormatter;
+import net.solarnetwork.billing.killbill.invoice.core.SolarNetworkInvoiceFormatterHelper;
+
+/**
+ * {@link ExtendedInvoiceFormatter} for use in the Kill Bill email notifications plugin.
+ * 
+ * @author matt
+ */
+public class SolarNetworkInvoiceFormatter extends DefaultInvoiceFormatter
+    implements ExtendedInvoiceFormatter, Supplier<List<InvoiceItem>> {
+
+  private final SolarNetworkInvoiceFormatterHelper delegate;
+
+  /**
+   * Constructor.
+   * 
+   * @param translator
+   *          the available translations
+   * @param invoice
+   *          the invoice
+   * @param locale
+   *          the desired locale
+   * @param customFields
+   *          account custom fields (optional)
+   */
+  public SolarNetworkInvoiceFormatter(Map<String, String> translator, Invoice invoice,
+      Locale locale, List<CustomField> customFields) {
+    super(translator, invoice, locale);
+    this.delegate = new SolarNetworkInvoiceFormatterHelper(this, this, locale, customFields);
+  }
+
+  @Override
+  public List<InvoiceItem> get() {
+    return super.getInvoiceItems();
+  }
+
+  @Override
+  public List<InvoiceItem> getInvoiceItems() {
+    return delegate.getExtendedInvoiceItems();
+  }
+
+  @Override
+  public List<InvoiceItem> getNonTaxInvoiceItems() {
+    return delegate.getNonTaxInvoiceItems();
+  }
+
+  @Override
+  public List<InvoiceItem> getNonTaxInvoiceItemsSortedBySubscriptionCustomFields() {
+    return delegate.getNonTaxInvoiceItemsSortedBySubscriptionCustomFields();
+  }
+
+  @Override
+  public List<InvoiceItem> getTaxInvoiceItems() {
+    return delegate.getTaxInvoiceItems();
+  }
+
+  @Override
+  public List<InvoiceItem> getTaxInvoiceItemsGroupedByDescription() {
+    return delegate.getTaxInvoiceItemsGroupedByDescription();
+  }
+
+  @Override
+  public BigDecimal getTaxAmount() {
+    return delegate.getTaxAmount();
+  }
+
+  @Override
+  public String getFormattedTaxAmount() {
+    return delegate.getFormattedTaxAmount();
+  }
+
+  @Override
+  public BigDecimal getNonTaxChargedAmount() {
+    return delegate.getNonTaxChargedAmount();
+  }
+
+  @Override
+  public String getFormattedNonTaxChargedAmount() {
+    return delegate.getFormattedNonTaxChargedAmount();
+  }
+
+  @Override
+  public String getBasicFormattedPaidAmount() {
+    return delegate.getBasicFormattedPaidAmount();
+  }
+
+  @Override
+  public String getBasicFormattedBalance() {
+    return delegate.getBasicFormattedBalance();
+  }
+
+  @Override
+  public List<CustomField> getCustomFields() {
+    return delegate.getCustomFields();
+  }
+
+}

@@ -13,7 +13,7 @@
  *  limitations under the License.
  */
 
-package net.solarnetwork.billing.killbill.invoice;
+package net.solarnetwork.billing.killbill.invoice.core;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -28,6 +28,8 @@ import org.killbill.billing.catalog.api.Currency;
 import org.killbill.billing.invoice.api.InvoiceItemType;
 import org.killbill.billing.invoice.api.formatters.InvoiceItemFormatter;
 import org.killbill.billing.util.customfield.CustomField;
+
+import net.solarnetwork.billing.killbill.invoice.api.ExtendedInvoiceItemFormatter;
 
 /**
  * Implementation of {@link ExtendedInvoiceItemFormatter}.

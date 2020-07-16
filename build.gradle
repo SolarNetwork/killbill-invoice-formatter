@@ -4,6 +4,7 @@ plugins {
     id 'eclipse'
     id 'maven'
     id 'maven-publish'
+    id 'biz.aQute.bnd.builder'
     id 'net.saliman.properties' version '1.4.6'
     id 'net.researchgate.release' version '2.6.0'
     id 'com.jfrog.bintray' version '1.8.5'
@@ -11,15 +12,18 @@ plugins {
 
 repositories {
     jcenter()
+    mavenLocal()
 }
 
 wrapper {
-	gradleVersion = "5.4.1"
+	gradleVersion = "6.5.1"
 }
 
 ext {
+	jodaMoneyVersion = '0.12'
 	kbVersion = '0.22.10'
 	slf4jVersion = '1.7.25'
+	kbEmailNotifVersion = '0.6.2-SNAPSHOT'
 }
 
 checkstyle {
@@ -38,13 +42,27 @@ configurations.all {
     }
 }
 
+configurations {
+	embed
+	embed.transitive = false
+}
+
 dependencies {
-	compile "org.slf4j:slf4j-api:${slf4jVersion}"
-	compile "org.kill-bill.billing:killbill-internal-api:${kbVersion}"
-	compile "org.kill-bill.billing:killbill-invoice:${kbVersion}"
-	compile "org.kill-bill.billing:killbill-util:${kbVersion}"
+	embed "org.joda:joda-money:${jodaMoneyVersion}"
+
+	compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
+	compileOnly "org.kill-bill.billing:killbill-internal-api:${kbVersion}"
+	compileOnly "org.kill-bill.billing:killbill-invoice:${kbVersion}"
+	compileOnly "org.kill-bill.billing:killbill-util:${kbVersion}"	
+	compileOnly "org.kill-bill.billing.plugin.java:killbill-email-notifications-plugin:${kbEmailNotifVersion}"
 
     // Testing
+	testCompile "org.slf4j:slf4j-api:${slf4jVersion}"
+	testCompile "org.kill-bill.billing:killbill-internal-api:${kbVersion}"
+	testCompile "org.kill-bill.billing:killbill-invoice:${kbVersion}"
+	testCompile "org.kill-bill.billing:killbill-util:${kbVersion}"
+	testCompile "org.kill-bill.billing.plugin.java:killbill-email-notifications-plugin:${kbEmailNotifVersion}"
+
     testCompile "ch.qos.logback:logback-classic:1.1.11"
     testCompile "org.mockito:mockito-core:1.10.19"
     testCompile "org.hamcrest:hamcrest-library:1.3"
@@ -77,6 +95,13 @@ jar {
                    "Implementation-Version": version
     }
 }
+
+task copyToLib(type: Copy) {
+    from configurations.embed
+    into "$buildDir/embed"
+}
+
+compileJava.dependsOn = [copyToLib]
 
 def pomConfig = {
     licenses {

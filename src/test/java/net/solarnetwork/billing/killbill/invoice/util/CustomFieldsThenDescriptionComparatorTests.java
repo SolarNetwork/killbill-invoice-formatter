@@ -13,7 +13,7 @@
  *  limitations under the License.
  */
 
-package net.solarnetwork.billing.killbill.invoice;
+package net.solarnetwork.billing.killbill.invoice.util;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.arrayContaining;
@@ -30,6 +30,8 @@ import org.junit.runner.RunWith;
 import org.killbill.billing.util.customfield.CustomField;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import net.solarnetwork.billing.killbill.invoice.api.ExtendedInvoiceItemFormatter;
 
 /**
  * Test cases for the {@link CustomFieldsThenDescriptionComparator} class.

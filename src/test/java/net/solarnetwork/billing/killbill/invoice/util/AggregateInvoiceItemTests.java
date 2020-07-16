@@ -13,7 +13,7 @@
  *  limitations under the License.
  */
 
-package net.solarnetwork.billing.killbill.invoice;
+package net.solarnetwork.billing.killbill.invoice.util;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.sameInstance;
@@ -26,6 +26,8 @@ import java.util.Locale;
 import org.junit.Test;
 import org.killbill.billing.catalog.api.Currency;
 import org.mockito.Mockito;
+
+import net.solarnetwork.billing.killbill.invoice.api.ExtendedInvoiceItemFormatter;
 
 /**
  * Test cases for the {@link AggregateInvoiceItem} class.

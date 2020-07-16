@@ -13,25 +13,16 @@
  *  limitations under the License.
  */
 
-package net.solarnetwork.billing.killbill.invoice;
+package net.solarnetwork.billing.killbill.invoice.api;
 
-import java.util.List;
-
-import org.killbill.billing.invoice.api.formatters.InvoiceItemFormatter;
-import org.killbill.billing.util.customfield.CustomField;
+import org.killbill.billing.invoice.api.formatters.InvoiceFormatter;
 
 /**
- * API for extended attributes on {@link InvoiceItemFormatter}.
+ * API for extended attributes on {@link InvoiceFormatter}.
  * 
  * @author matt
- * @version 1
+ * @version 2
  */
-public interface ExtendedInvoiceItemFormatter extends InvoiceItemFormatter {
+public interface ExtendedInvoiceFormatter extends InvoiceFormatter, InvoiceFormatterExtensions {
 
-  /**
-   * Get a list of subscription custom fields.
-   * 
-   * @return all custom fields for the item's subscription, or an empty list
-   */
-  List<CustomField> getSubscriptionCustomFields();
 }

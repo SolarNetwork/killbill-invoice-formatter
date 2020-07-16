@@ -13,7 +13,7 @@
  *  limitations under the License.
  */
 
-package net.solarnetwork.billing.killbill.invoice;
+package net.solarnetwork.billing.killbill.invoice.util;
 
 import java.util.Comparator;
 
@@ -26,6 +26,13 @@ import org.killbill.billing.util.customfield.CustomField;
  * @since 0.2
  */
 public class CaseInsensitiveCustomFieldNameComparator implements Comparator<CustomField> {
+
+  /**
+   * Static instance of {@code CaseInsensitiveCustomFieldNameComparator}.
+   */
+  // CHECKSTYLE OFF: LineLength
+  public static final Comparator<CustomField> CUSTOM_FIELD_SORT_BY_NAME = new CaseInsensitiveCustomFieldNameComparator();
+  // CHECKSTYLE ON: LineLength
 
   @Override
   public int compare(CustomField o1, CustomField o2) {

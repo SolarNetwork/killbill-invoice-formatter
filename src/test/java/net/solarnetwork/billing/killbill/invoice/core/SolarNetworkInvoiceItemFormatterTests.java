@@ -13,7 +13,7 @@
  *  limitations under the License.
  */
 
-package net.solarnetwork.billing.killbill.invoice;
+package net.solarnetwork.billing.killbill.invoice.core;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;

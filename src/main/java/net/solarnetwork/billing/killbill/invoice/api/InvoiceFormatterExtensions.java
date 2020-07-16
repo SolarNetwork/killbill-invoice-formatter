@@ -1,4 +1,4 @@
-/*  Copyright 2017 SolarNetwork Foundation
+/*  Copyright 2020 SolarNetwork Foundation
  *  
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,22 +13,20 @@
  *  limitations under the License.
  */
 
-package net.solarnetwork.billing.killbill.invoice;
+package net.solarnetwork.billing.killbill.invoice.api;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import org.killbill.billing.invoice.api.InvoiceItem;
-import org.killbill.billing.invoice.api.formatters.InvoiceFormatter;
 import org.killbill.billing.util.customfield.CustomField;
 
 /**
- * API for extended attributes on {@link InvoiceFormatter}.
+ * API of extended methods for invoice formatting.
  * 
  * @author matt
- * @version 2
  */
-public interface ExtendedInvoiceFormatter extends InvoiceFormatter {
+public interface InvoiceFormatterExtensions {
 
   /**
    * Get a list of all non-tax invoice items.

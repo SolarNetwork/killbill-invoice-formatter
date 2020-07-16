@@ -13,7 +13,7 @@
  *  limitations under the License.
  */
 
-package net.solarnetwork.billing.killbill.invoice;
+package net.solarnetwork.billing.killbill.invoice.util;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -27,6 +27,8 @@ import org.joda.time.LocalDate;
 import org.killbill.billing.catalog.api.Currency;
 import org.killbill.billing.invoice.api.InvoiceItemType;
 import org.killbill.billing.util.customfield.CustomField;
+
+import net.solarnetwork.billing.killbill.invoice.api.ExtendedInvoiceItemFormatter;
 
 /**
  * An aggregate invoice item that sums the item amount for a group of items.
@@ -134,7 +136,7 @@ public class AggregateInvoiceItem implements ExtendedInvoiceItemFormatter {
    */
   @Override
   public String getFormattedAmount() {
-    return SolarNetworkInvoiceFormatter.formattedCurrencyAmountWithImplicitSymbol(getAmount(),
+    return StringUtils.formattedCurrencyAmountWithImplicitSymbol(getAmount(),
         getCurrency().toString(), locale);
   }
 

@@ -1,0 +1,18 @@
+Bundle-SymbolicName: net.solarnetwork.billing.killbill.invoice.formatter
+Bundle-Name: SolarNetwork Kill Bill Invoice Formatter
+Bundle-Description: Provides an extended InvoiceFormatter implementation.
+Bundle-Vendor: SolarNetwork
+Export-Package: \
+	net.solarnetwork.billing.killbill.invoice.api,\
+	net.solarnetwork.billing.killbill.invoice.core,\
+	net.solarnetwork.billing.killbill.invoice.util
+Bundle-Activator: net.solarnetwork.billing.killbill.invoice.notification.Activator
+Import-Package: \
+	!org.joda.convert,\
+	!org.killbill.billing.callcontext,\
+	!org.killbill.billing.invoice.template.formatters,\
+	!org.killbill.billing.util.customfield.dao,\
+	!org.killbill.billing.util.template.translation,\
+	javax.inject;resolution:=optional,\
+	*
+-includeresource: lib/=build/embed/;lib:=true

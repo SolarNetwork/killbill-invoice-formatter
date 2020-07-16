@@ -13,13 +13,15 @@
  *  limitations under the License.
  */
 
-package net.solarnetwork.billing.killbill.invoice;
+package net.solarnetwork.billing.killbill.invoice.util;
 
 import java.util.Comparator;
 import java.util.List;
 
 import org.killbill.billing.invoice.api.formatters.InvoiceItemFormatter;
 import org.killbill.billing.util.customfield.CustomField;
+
+import net.solarnetwork.billing.killbill.invoice.api.ExtendedInvoiceItemFormatter;
 
 /**
  * A comparator to sort custom fields by their names in a case-insensitive manner.
@@ -29,8 +31,11 @@ import org.killbill.billing.util.customfield.CustomField;
  */
 public class CustomFieldsThenDescriptionComparator implements Comparator<InvoiceItemFormatter> {
 
+  /**
+   * Static instance of {@code CaseInsensitiveCustomFieldNameComparator}.
+   */
   // CHECKSTYLE OFF: LineLength
-  private static final Comparator<CustomField> CUSTOM_FIELD_SORT_BY_NAME = new CaseInsensitiveCustomFieldNameComparator();
+  public static final Comparator<InvoiceItemFormatter> INVOICE_ITEM_SORT_BY_CUSTOM_FIELDS_THEN_DESC = new CustomFieldsThenDescriptionComparator();
   // CHECKSTYLE ON: LineLength
 
   @Override
@@ -52,8 +57,8 @@ public class CustomFieldsThenDescriptionComparator implements Comparator<Invoice
         return 1;
       } else if (fields1 != null && !fields1.isEmpty() && fields2 != null && !fields2.isEmpty()) {
         // sort fields by name, then compare each in turn
-        fields1.sort(CUSTOM_FIELD_SORT_BY_NAME);
-        fields2.sort(CUSTOM_FIELD_SORT_BY_NAME);
+        fields1.sort(CaseInsensitiveCustomFieldNameComparator.CUSTOM_FIELD_SORT_BY_NAME);
+        fields2.sort(CaseInsensitiveCustomFieldNameComparator.CUSTOM_FIELD_SORT_BY_NAME);
         int max = Math.min(fields1.size(), fields2.size());
         for (int i = 0; i < max; i++) {
           CustomField f1 = fields1.get(i);

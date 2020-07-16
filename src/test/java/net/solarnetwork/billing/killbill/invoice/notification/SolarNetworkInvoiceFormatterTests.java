@@ -1,4 +1,4 @@
-/*  Copyright 2017 SolarNetwork Foundation
+/*  Copyright 2020 SolarNetwork Foundation
  *  
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,13 +13,10 @@
  *  limitations under the License.
  */
 
-package net.solarnetwork.billing.killbill.invoice;
+package net.solarnetwork.billing.killbill.invoice.notification;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static net.solarnetwork.billing.killbill.invoice.SolarNetworkInvoiceFormatter.formattedCurrencyAmountWithExplicitSymbol;
-import static net.solarnetwork.billing.killbill.invoice.SolarNetworkInvoiceFormatter.formattedCurrencyAmountWithImplicitSymbol;
-import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
@@ -28,18 +25,17 @@ import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.killbill.billing.ObjectType;
-import org.killbill.billing.callcontext.InternalTenantContext;
-import org.killbill.billing.catalog.api.Currency;
 import org.killbill.billing.currency.api.CurrencyConversionApi;
 import org.killbill.billing.invoice.api.Invoice;
 import org.killbill.billing.invoice.api.InvoiceItem;
@@ -52,18 +48,19 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import net.solarnetwork.billing.killbill.invoice.api.ExtendedInvoiceItemFormatter;
+import net.solarnetwork.billing.killbill.invoice.core.SolarNetworkInvoiceItemFormatter;
+import net.solarnetwork.billing.killbill.invoice.notification.SolarNetworkInvoiceFormatter;
+
 /**
  * Test cases for the {@link SolarNetworkInvoiceFormatter} class.
  * 
  * @author matt
  */
 @RunWith(MockitoJUnitRunner.class)
-public class SolarNetworkInvoiceFormaterTests {
+public class SolarNetworkInvoiceFormatterTests {
 
   private static final Locale EN_NZ = new Locale("en", "NZ");
-  private static final Long TENANT_RECORD_ID = -1L;
-  private static final Long ACCOUNT_RECORD_ID = -2L;
-  private static final DateTimeZone FIXED_TIME_ZONE = DateTimeZone.forOffsetHours(12);
   private static final String ACCOUNT_FIELD = "accField";
   private static final String SUBSCRIPTION_FIELD = "subField";
   private static final BigDecimal AMOUNT_1 = new BigDecimal("1.99");
@@ -85,71 +82,18 @@ public class SolarNetworkInvoiceFormaterTests {
   private UUID accountId;
   private UUID subscriptionId;
   private DateTime now;
-  private InternalTenantContext internalTenantContext;
 
   @Before
   public void setup() {
     now = new DateTime();
     accountId = UUID.randomUUID();
     subscriptionId = UUID.randomUUID();
-    internalTenantContext = new InternalTenantContext(TENANT_RECORD_ID, ACCOUNT_RECORD_ID,
-        FIXED_TIME_ZONE, now);
   }
 
-  @Test
-  public void basicMatchingCurrencyAndLocale() {
-    String result = formattedCurrencyAmountWithImplicitSymbol(new BigDecimal("1.99"),
-        Currency.NZD.toString(), EN_NZ);
-    assertThat("Formatted amount", result, equalTo("$1.99"));
-  }
-
-  @Test
-  public void basicRoundedMatchingCurrencyAndLocale() {
-    String result = formattedCurrencyAmountWithImplicitSymbol(new BigDecimal("1.23456"),
-        Currency.NZD.toString(), EN_NZ);
-    assertThat("Formatted amount", result, equalTo("$1.23"));
-  }
-
-  @Test
-  public void basicDifferingCurrencyAndLocale() {
-    String result = formattedCurrencyAmountWithImplicitSymbol(new BigDecimal("1.99"),
-        Currency.NZD.toString(), Locale.US);
-    assertThat("Formatted amount", result, anyOf(equalTo("NZD1.99"), equalTo("NZ$1.99")));
-  }
-
-  @Test
-  public void basicDifferingCurrencyAndLocale2() {
-    String result = formattedCurrencyAmountWithImplicitSymbol(new BigDecimal("1.99"),
-        Currency.USD.toString(), EN_NZ);
-    assertThat("Formatted amount", result, anyOf(equalTo("USD1.99"), equalTo("US$1.99")));
-  }
-
-  @Test
-  public void basicDifferingCurrencyAndLocale3() {
-    String result = formattedCurrencyAmountWithImplicitSymbol(new BigDecimal("1.99"),
-        Currency.NZD.toString(), Locale.GERMANY);
-    assertThat("Formatted amount", result, anyOf(equalTo("1,99 NZD"), equalTo("1,99 NZ$")));
-  }
-
-  @Test
-  public void explicitMatchingCurrencyAndLocale() {
-    String result = formattedCurrencyAmountWithExplicitSymbol(new BigDecimal("1.99"),
-        Currency.NZD.toString(), EN_NZ);
-    assertThat("Formatted amount", result, equalTo("NZ$1.99"));
-  }
-
-  @Test
-  public void explicitMatchingCurrencyAndLocale2() {
-    String result = formattedCurrencyAmountWithExplicitSymbol(new BigDecimal("1.99"),
-        Currency.USD.toString(), Locale.US);
-    assertThat("Formatted amount", result, equalTo("US$1.99"));
-  }
-
-  @Test
-  public void explicitRoundedMatchingCurrencyAndLocale() {
-    String result = formattedCurrencyAmountWithExplicitSymbol(new BigDecimal("1.23456"),
-        Currency.NZD.toString(), EN_NZ);
-    assertThat("Formatted amount", result, equalTo("NZ$1.23"));
+  private Map<String, String> defaultTranslations() {
+    Map<String, String> m = new LinkedHashMap<>();
+    // TODO
+    return m;
   }
 
   private SolarNetworkInvoiceFormatter createDefaultFormatter(Invoice invoice, Locale locale) {
@@ -158,8 +102,12 @@ public class SolarNetworkInvoiceFormaterTests {
 
   private SolarNetworkInvoiceFormatter createDefaultFormatter(Invoice invoice, Locale locale,
       List<CustomField> fields) {
-    return new SolarNetworkInvoiceFormatter(translatorConfig, invoice, locale,
-        currencyConversionApi, resourceBundleFactory, internalTenantContext, fields);
+    return createDefaultFormatter(defaultTranslations(), invoice, locale, fields);
+  }
+
+  private SolarNetworkInvoiceFormatter createDefaultFormatter(Map<String, String> translations,
+      Invoice invoice, Locale locale, List<CustomField> fields) {
+    return new SolarNetworkInvoiceFormatter(translations, invoice, locale, fields);
   }
 
   private Invoice createInvoice(List<InvoiceItem> items) {
