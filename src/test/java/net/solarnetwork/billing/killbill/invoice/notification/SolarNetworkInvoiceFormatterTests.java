@@ -50,7 +50,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import net.solarnetwork.billing.killbill.invoice.api.ExtendedInvoiceItemFormatter;
 import net.solarnetwork.billing.killbill.invoice.core.SolarNetworkInvoiceItemFormatter;
-import net.solarnetwork.billing.killbill.invoice.notification.SolarNetworkInvoiceFormatter;
 
 /**
  * Test cases for the {@link SolarNetworkInvoiceFormatter} class.
