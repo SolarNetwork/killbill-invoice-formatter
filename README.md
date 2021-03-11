@@ -1,6 +1,9 @@
 SolarNetwork Kill Bill Invoice Formatter
 ========================================
 
+> :bangbang: **Note** we are no longer using Kill Bill at SolarNetwork, so will no longer be
+> maintaining this project.
+
 An extended version of the default Kill Bill invoice formatter, exposing some additional attributes
 for invoice templates to work with.
 
